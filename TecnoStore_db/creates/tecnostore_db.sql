@@ -88,6 +88,4 @@ CREATE TABLE IF NOT EXISTS `detalle_ventas` (
     REFERENCES `celulares` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE
-) 
-
-ENGINE = InnoDB;
+) ENGINE = InnoDB;
