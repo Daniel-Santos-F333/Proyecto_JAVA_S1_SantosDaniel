@@ -1,0 +1,41 @@
+# MySQL Workbench
+tecnostore_db.mwb
+tecnostore_db.mwb.bak
+
+# IDE (VS Code, IntelliJ, Eclipse)
+.vscode/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Java compilado
+*.class
+*.jar
+*.war
+target/
+out/
+bin/
+
+# Dependencias Maven/Gradle
+dependency-reduced-pom.xml
+.gradle/
+build/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos sensibles y configuración
+.env
+*.properties
+database.properties
+config.properties
+
+# Reportes generados
+reporte_ventas.txt
+*.log
+
+# Caché
+*.cache
