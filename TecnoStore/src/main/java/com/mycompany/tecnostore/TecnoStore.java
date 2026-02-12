@@ -1,25 +1,38 @@
-package com.mycompany.tecnostore;
+package com.mycompany.tecnostore; 
 
-import CONTROLADOR.GestionarClienteImpl;
-import MODELO.Cliente;
+import CONTROLADOR.GestionarCelularImpl;
+import CONTROLADOR.GestionarMarca;
+import MODELO.Celular;
+import MODELO.CategoriaGama;
+import java.util.ArrayList; // <--- Faltaba esta línea
 
 public class TecnoStore {
+
     public static void main(String[] args) {
-        // 1. Instanciamos el controlador
-        GestionarClienteImpl control = new GestionarClienteImpl();
+        // Instanciamos los controladores
+        GestionarMarca gMarca = new GestionarMarca();
+        GestionarCelularImpl gCel = new GestionarCelularImpl();
 
-        // 2. Creamos un cliente de prueba
-        // ID se pone 0 porque la DB lo genera solo
-        Cliente prueba = new Cliente(0, "Daniel Prueba", "123456", "daniel@test.com", "300123");
+        // 1. Marcas ya registradas (Samsung=1, Apple=2)
+        // gMarca.registrarMarca("Samsung"); 
+        // gMarca.registrarMarca("Apple");
 
-        // 3. Intentamos guardar
-        System.out.println("Intentando guardar cliente...");
-        control.guardar(prueba);
+        // 2. REGISTRO DEL CELULAR
+        Celular nuevoCel = new Celular(0, "1", "S24 Ultra", 5000000.0, 10, "Android", CategoriaGama.ALTA);
 
-        // 4. Verificamos listando
-        System.out.println("Lista de clientes en la DB:");
-        for (Cliente c : control.listar()) {
-            System.out.println(c);
+        System.out.println("--- Intentando registro de Celular ---");
+        gCel.registrar(nuevoCel);
+
+        // 3. LISTADO FINAL
+        System.out.println("\n--- Inventario en Base de Datos ---");
+        ArrayList<Celular> lista = gCel.listar();
+        
+        if (lista.isEmpty()) {
+            System.out.println("El inventario está vacío.");
+        } else {
+            for (Celular c : lista) {
+                System.out.println(c);
+            }
         }
-    }
-}
+    } // Cierre del método main
+} // <--- ESTA ES LA LLAVE QUE FALTABA (Cierre de la clase)
