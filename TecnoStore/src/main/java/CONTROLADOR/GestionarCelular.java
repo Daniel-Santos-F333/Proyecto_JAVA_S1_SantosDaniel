@@ -8,5 +8,6 @@ public interface GestionarCelular {
     void actualizar(Celular cel);
     void eliminar(int id);
     ArrayList<Celular> listar();
-    ArrayList<Celular> stockBajo(); // Para cumplir con el requerimiento de "stock < 5"
+    ArrayList<Celular> stockBajo();
+    void generarReporteArchivo(); 
 }

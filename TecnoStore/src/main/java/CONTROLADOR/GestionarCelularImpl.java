@@ -4,6 +4,9 @@ import MODELO.Celular;
 import MODELO.CategoriaGama;
 import java.sql.*;
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
 
 /**
  * Implementación de la interfaz GestionarCelular.
@@ -18,6 +21,19 @@ public class GestionarCelularImpl implements GestionarCelular {
      * Inserta un nuevo registro en la tabla 'celulares'.
      * @param cel Objeto de tipo Celular con los datos capturados.
      */
+    public void generarReporteArchivo() {
+    ArrayList<Celular> bajos = stockBajo(); // Reutilizamos tu lógica de Stream/SQL
+    try (PrintWriter writer = new PrintWriter(new FileWriter("reporte_ventas.txt"))) {
+        writer.println("======= REPORTE DE TECNOSTORE =======");
+        writer.println("Celulares con necesidad de reposición:");
+        for (Celular c : bajos) {
+            writer.println("- " + c.getMarca() + " " + c.getModelo() + " | Stock: " + c.getStock());
+        }
+        System.out.println("✅ Archivo 'reporte_ventas.txt' generado con éxito.");
+    } catch (IOException e) {
+        System.out.println("❌ Error al crear el archivo: " + e.getMessage());
+    }
+}
     @Override
     public void registrar(Celular cel) {
         String sql = "INSERT INTO celulares (marca_id, modelo, sistema_operativo, gama, precio, stock) VALUES (?, ?, ?, ?, ?, ?)";
