@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
-public class AlertaStockService {
+public  class AlertaStockService implements GestionStock {
     
     private final Conexion con = new Conexion();
     
@@ -45,11 +45,10 @@ public class AlertaStockService {
     
     public void generarReporteArchivo() {
         ArrayList<Celular> bajos = stockBajo();
-        // Nombre de archivo corregido como pediste
+        
         try (PrintWriter writer = new PrintWriter(new FileWriter("reporte_stock_critico.txt"))) {
             writer.println("======= REPORTE DE STOCK CRÍTICO =======");
             for (Celular c : bajos) {
-                // El objeto Celular ya trae el nombre de la marca gracias al listar() corregido
                 writer.println("- " + c.getMarca() + " " + c.getModelo() + " | Stock: " + c.getStock());
             }
             System.out.println("✅ Reporte guardado como 'reporte_stock_critico.txt'.");
