@@ -1,13 +1,16 @@
 package VISTA;
 
 import CONTROLADOR.GestionarCelularImpl;
+import CONTROLADOR.GestionarMarca;
+import CONTROLADOR.InputValidator;
 import MODELO.Celular;
 import MODELO.CategoriaGama;
 import java.util.Scanner;
 
 // Clase para la interfaz de gestión de celulares
 public class menuCelular {
-
+    
+    private final GestionarMarca gm = new GestionarMarca();
     private final GestionarCelularImpl gc = new GestionarCelularImpl();
     private final Scanner sc = new Scanner(System.in);
 
@@ -44,50 +47,22 @@ public class menuCelular {
     }
 
     private void registrar() {
-        Celular c = new Celular();
-
         System.out.println("\n--- Registro de nuevo celular ---");
-        System.out.print("ID de Marca (Ej: 1 para Samsung): ");
-        c.setMarca(sc.nextLine());
+        Celular c = new Celular();
+        gm.listarMarcas(); // Esto mostrará el ID y el Nombre de las marcas de la DB
+    
+    System.out.print("Seleccione el ID de la marca: ");
+    c.setMarca(sc.nextLine());
+        // Usamos el validador centralizado
+        c.setMarca(InputValidator.leerTextoValido("ID de Marca: ", "\\d+"));
+        c.setModelo(InputValidator.leerTextoValido("Modelo: ", "^[a-zA-Z0-9 ]+$"));
+        c.setPrecio(InputValidator.leerDoublePositivo("Precio: "));
+        c.setStock(InputValidator.leerEnteroPositivo("Stock Inicial: "));
+        c.setSistemaOperativo(InputValidator.leerTextoValido("Sistema Operativo: ", null));
+        c.setGama(InputValidator.leerGama("Gama (ALTA, MEDIA, BAJA): "));
 
-        System.out.print("Modelo del equipo: ");
-        c.setModelo(sc.nextLine());
-
-        // Validación de entrada para el precio
-        try {
-            System.out.print("Precio de venta: ");
-            c.setPrecio(Double.parseDouble(sc.nextLine()));
-        } catch (NumberFormatException e) {
-            System.out.println("⚠️ Precio inválido, se registrará como 0.0");
-            c.setPrecio(0.0);
-        }
-
-        // Validación de entrada para el stock
-        try {
-            System.out.print("Cantidad inicial en stock: ");
-            c.setStock(Integer.parseInt(sc.nextLine()));
-        } catch (NumberFormatException e) {
-            System.out.println("⚠️ Stock inválido, se registrará como 0");
-            c.setStock(0);
-        }
-
-        System.out.print("Sistema Operativo: ");
-        c.setSistemaOperativo(sc.nextLine());
-
-        // Validación para el tipo de ENUM Gama
-        System.out.print("Gama (ALTA, MEDIA, BAJA): ");
-        String entradaGama = sc.nextLine().toUpperCase().trim();
-
-        try {
-            c.setGama(CategoriaGama.valueOf(entradaGama));
-        } catch (IllegalArgumentException e) {
-            System.out.println("⚠️ Gama no reconocida. Se asignará MEDIA por defecto.");
-            c.setGama(CategoriaGama.MEDIA);
-        }
-
-        // Envío del objeto al controlador para persistencia en DB
         gc.registrar(c);
-        System.out.println("✅ El equipo ha sido procesado.");
+        System.out.println("✅ Equipo registrado exitosamente.");
     }
 
     private void listar() {
@@ -99,7 +74,21 @@ public class menuCelular {
             lista.forEach(System.out::println);
         }
     }
-
+    
+    private void eliminar() {
+    int id = InputValidator.leerEnteroPositivo("Ingrese el ID del celular a eliminar: ");
+    
+    // El validador de confirmación que pediste
+    System.out.print("⚠️ ¿Está seguro que desea eliminar el ID " + id + "? (S/N): ");
+    String confirmacion = sc.nextLine().toUpperCase();
+    
+    if (confirmacion.equals("S")) {
+        gc.eliminar(id);
+    } else {
+        System.out.println("❌ Operación cancelada.");
+    }
+}
+    
     private void stockBajo() {
         System.out.println("\n======= EQUIPOS CON STOCK CRÍTICO =======");
         var listaBajos = gc.stockBajo();

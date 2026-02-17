@@ -14,17 +14,19 @@ public class GestionarCelularImpl implements GestionarCelular {
     private final Conexion con = new Conexion();
 
     // Crea el archivo de texto para el reporte de stock
+    @Override
     public void generarReporteArchivo() {
-        ArrayList<Celular> bajos = stockBajo(); 
-        try (PrintWriter writer = new PrintWriter(new FileWriter("reporte_ventas.txt"))) {
-            writer.println("======= REPORTE DE TECNOSTORE =======");
-            writer.println("Celulares con poco inventario:");
+        ArrayList<Celular> bajos = stockBajo();
+        // Nombre de archivo corregido como pediste
+        try (PrintWriter writer = new PrintWriter(new FileWriter("reporte_stock_critico.txt"))) {
+            writer.println("======= REPORTE DE STOCK CRÍTICO =======");
             for (Celular c : bajos) {
-                writer.println("- " + c.getMarca() + " " + c.getModelo() + " | Stock actual: " + c.getStock());
+                // El objeto Celular ya trae el nombre de la marca gracias al listar() corregido
+                writer.println("- " + c.getMarca() + " " + c.getModelo() + " | Stock: " + c.getStock());
             }
-            System.out.println("✅ Reporte guardado en 'reporte_ventas.txt'.");
+            System.out.println("✅ Reporte guardado como 'reporte_stock_critico.txt'.");
         } catch (IOException e) {
-            System.out.println("❌ Error al guardar el archivo: " + e.getMessage());
+            System.out.println("❌ Error: " + e.getMessage());
         }
     }
 
@@ -53,22 +55,22 @@ public class GestionarCelularImpl implements GestionarCelular {
     @Override
     public ArrayList<Celular> listar() {
         ArrayList<Celular> lista = new ArrayList<>();
-        String sql = "SELECT * FROM celulares";
-        
-        try (Connection c = con.conectar();
-             Statement st = c.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            
+        // Cambiamos el SQL para traer el nombre de la marca
+        String sql = "SELECT c.id, m.nombreMarca AS marca, c.modelo, c.precio, c.stock, c.sistema_operativo, c.gama "
+                + "FROM celulares c "
+                + "INNER JOIN marcas m ON c.marca_id = m.id";
+
+        try (Connection con = this.con.conectar(); Statement st = con.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+
             while (rs.next()) {
-                // Creamos los objetos Celular con los datos que trae la tabla
                 lista.add(new Celular(
-                    rs.getInt("id"),
-                    rs.getString("marca_id"),
-                    rs.getString("modelo"),
-                    rs.getDouble("precio"),
-                    rs.getInt("stock"),
-                    rs.getString("sistema_operativo"),
-                    CategoriaGama.valueOf(rs.getString("gama").toUpperCase())
+                        rs.getInt("id"),
+                        rs.getString("marca"), // Ahora es el texto "Samsung", etc.
+                        rs.getString("modelo"),
+                        rs.getDouble("precio"),
+                        rs.getInt("stock"),
+                        rs.getString("sistema_operativo"),
+                        CategoriaGama.valueOf(rs.getString("gama").toUpperCase())
                 ));
             }
         } catch (SQLException e) {
@@ -105,5 +107,21 @@ public class GestionarCelularImpl implements GestionarCelular {
     }
 
     @Override public void actualizar(Celular cel) {}
-    @Override public void eliminar(int id) {}
+    
+    
+    @Override
+    public void eliminar(int id) {
+        String sql = "DELETE FROM celulares WHERE id = ?";
+        try (Connection c = con.conectar(); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            int filas = ps.executeUpdate();
+            if (filas > 0) {
+                System.out.println("✅ Celular eliminado.");
+            } else {
+                System.out.println("⚠️ No se encontró el ID.");
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error al eliminar: " + e.getMessage());
+        }
+    }
 }
