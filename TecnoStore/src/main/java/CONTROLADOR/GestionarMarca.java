@@ -27,7 +27,7 @@ public class GestionarMarca {
 
     // Método para borrar marcas por su ID
     public void eliminarMarca(int id) {
-        String sql = "DELETE FROM marcas WHERE idMarca = ?";
+        String sql = "DELETE FROM marcas WHERE id = ?";
         try (Connection c = con.conectar()) {
             if (c == null) return;
             try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -57,7 +57,7 @@ public class GestionarMarca {
                 boolean hayDatos = false;
                 while (rs.next()) {
                     hayDatos = true;
-                    System.out.println("ID: " + rs.getInt("idMarca") + " | Marca: " + rs.getString("nombreMarca"));
+                    System.out.println("ID: " + rs.getInt("id") + " | Marca: " + rs.getString("nombreMarca"));
                 }
                 if (!hayDatos) System.out.println("La lista está vacía.");
             }
