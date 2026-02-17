@@ -2,7 +2,6 @@ package VISTA;
 
 import java.util.Scanner;
 
-// Clase principal de la interfaz de usuario
 public class menu {
 
     public void Menu_Principal() {
@@ -16,16 +15,16 @@ public class menu {
                                    1. Gestionar Celulares
                                    2. Gestionar Clientes
                                    3. Gestionar Marcas
-                                   4. Salir
+                                   4. Gestionar Ventas
+                                   5. Salir
                                ******************************
                                """);
             System.out.print("Seleccione una opción: ");
 
-            // Validación para evitar que el programa se cierre si el usuario ingresa letras
             try {
                 op = Integer.parseInt(sc.nextLine()); 
             } catch (NumberFormatException e) {
-                System.out.println("❌ ERROR: Ingrese un número válido (1-4).");
+                System.out.println("❌ ERROR: Ingrese un número válido (1-5).");
                 op = 0; 
                 continue; 
             }
@@ -43,9 +42,13 @@ public class menu {
                     menuMarca mm = new menuMarca();
                     mm.menu();
                 }
-                case 4 -> System.out.println("Cerrando sistema... ¡Hasta pronto!");
+                case 4 -> {
+                    menuVenta mv = new menuVenta();
+                    mv.menu();
+                }
+                case 5 -> System.out.println("Cerrando sistema... ¡Hasta pronto!");
                 default -> System.out.println("❌ Opción no disponible.");
             }
-        } while (op != 4);
+        } while (op != 5);
     }
 }
